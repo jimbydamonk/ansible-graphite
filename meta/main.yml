@@ -6,10 +6,10 @@ galaxy_info:
   license: Apache
   min_ansible_version: 2.0
   platforms:
-    - name: EL
+    - name: Ubuntu
       versions:
         - xenial
-    - name: Ubuntu
+    - name: EL
       versions:
         - 6
         - 7
@@ -20,7 +20,7 @@ galaxy_info:
 
 dependencies:
   - { role: bobbyrenwick.pip }
-  - { role: ansible-libselinux-python }
+  - { role: jimbydamonk.ansible-libselinux-python }
   - { role: cchurch.uwsgi }
   - { role: geerlingguy.repo-epel, when: ansible_os_family == "RedHat" and grafana_install_nginx }
   - { role: geerlingguy.nginx }
