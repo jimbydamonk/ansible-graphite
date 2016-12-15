@@ -12,6 +12,13 @@
     state: present
   when: ansible_os_family == 'Debian'
 
+- name: Update debians default to enable carbon
+  lineinfile:
+    dest: /etc/default/graphite-carbon
+    regexp: '^CARBON_CACHE_ENABLED='
+    line: 'CARBON_CACHE_ENABLED=true'
+  when: ansible_os_family == 'Debian'
+
 - name: Create whisper directory
   file:
     path: "{{ whisper_dir }}"
