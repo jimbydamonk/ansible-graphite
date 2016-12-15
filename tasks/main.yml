@@ -1,0 +1,12 @@
+---
+- include: graphite.yml
+- include: carbon.yml
+
+- name: Add job to remove old whisper data
+  cron:
+    name: "{{ item.name }}"
+    cron_file: ansible_whisper_data_cleanup
+    weekday: "{{ item.day |default (0) }}"
+    user: "{{ item.user }}"
+    job: "{{ item.job }}"
+  with_items: "{{ whisper_cron_jobs }}"

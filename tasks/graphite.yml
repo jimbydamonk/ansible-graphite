@@ -1,0 +1,125 @@
+---
+- name: Lookup OS specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Run OS specific tasks
+  include: "setup-{{ ansible_os_family }}.yml"
+
+- name: Install graphite pre reqs (pip)
+  pip:
+    name: "{{ item }}"
+    executable: "pip2.7"
+  with_items:
+    - django<1.9
+    - django-tagging
+    - whisper
+    - cairocffi
+    - pytz
+
+- name: Install graphite
+  pip:
+    name: graphite-web
+    executable: "pip2.7"
+
+- name: Create graphite directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ graphite_conf_dir }}"
+    - "{{ graphite_storage_dir }}"
+    - "{{ graphite_content_dir }}"
+    - "{{ graphite_rrd_dir }}"
+    - "{{ graphite_log_dir }}"
+
+- name: Configure Grapthite
+  template:
+    src: etc/graphite-web/local_settings.py.j2
+    dest: "{{ graphite_webapp }}/graphite/local_settings.py"
+    mode: "0755"
+
+- name: Create graphite database
+  command: python2.7 ./manage.py syncdb --noinput
+  args:
+    chdir: "{{ graphite_webapp }}/graphite"
+    creates: "{{ graphite_webapp }}/graphite.db"
+  register: graphite_db_setup
+
+- name: Wait for graphite_db to be setup
+  shell: sleep 3
+  when: "{{ graphite_db_setup.changed }}"
+
+- name: Configure uwsgi for graphite-web
+  template:
+    src: etc/uwsgi/vassals/graphite.ini.j2
+    dest: /etc/uwsgi-emperor/vassals/graphite.ini
+    mode: "0755"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    backup: true
+
+- name: Configure wsgi for Grapthite
+  template:
+    src: wsgi.py
+    dest: "{{ graphite_webapp }}/wsgi.py"
+    mode: "0755"
+    backup: yes
+  notify: Reload nginx
+
+- name: Configure nginx for Grapthite
+  template:
+    src: etc/nginx/conf.d/graphite.conf.j2
+    dest: /etc/nginx/conf.d/graphite.conf
+    mode: 0755
+    backup: yes
+  notify: Reload nginx
+
+- name: Copy selinux policy for nginx and uwsgi
+  copy:
+    src: nginx_uwsgi.pp
+    dest: /tmp/nginx_uwsgi.pp
+  register: uwsgi_custom_policy_output
+  when: (ansible_selinux != false) and (ansible_selinux.status == 'enabled')
+
+- name: Install custom policy module
+  shell: /usr/sbin/semodule -i /tmp/nginx_uwsgi.pp
+  when: uwsgi_custom_policy_output.changed
+
+- name: Change owndership of graphite-web directory
+  file:
+    path: "{{ graphite_webapp }}"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    recurse: yes
+    state: directory
+
+- name: Change owndership of graphite storage data directory
+  file:
+    path: "{{ graphite_storage_dir }}"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    recurse: yes
+    state: directory
+
+- name: Change owndership of graphite log directory
+  file:
+    path: "{{ graphite_log_dir }}"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    recurse: yes
+    state: directory
+
+- name: Change owndership of whisper data directory
+  file:
+    path: "{{ whisper_dir }}"
+    mode: 0755
+    recurse: yes
+    state: directory
+
+- name: Create directory for uwsgi pid and socket
+  file:
+    path: "{{ graphite_uwsgi_sock_dir }}"
+    mode: 0755
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    state: directory

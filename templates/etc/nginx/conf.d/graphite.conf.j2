@@ -1,0 +1,25 @@
+upstream django {
+    ip_hash;
+    server unix:{{ graphite_uwsgi_sock }};
+}
+server {
+    listen      *:{{ graphite_port }};
+    server_name {{ graphite_host }};
+    access_log /var/log/nginx/graphite.log;
+    error_log /var/log/nginx/graphite.error.log;
+    charset     utf-8;
+    # Django admin media.
+    location /media/admin/ {
+        alias {{ django_dir }}/contrib/admin/media/;
+    }
+
+    location /content/ {
+        alias {{ graphite_content_dir }}/;
+    }
+
+    # Finally, send all non-media requests to the Django server.
+    location / {
+        uwsgi_pass  django;
+        include     uwsgi_params;
+    }
+}

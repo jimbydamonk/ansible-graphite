@@ -1,0 +1,49 @@
+---
+graphite_dir: "{{ dist_graphite_dir }}" #Check the OS file in vars
+graphite_webapp: "{{ graphite_dir }}/webapp"
+graphite_conf_dir: "{{ graphite_dir }}/conf"
+graphite_storage_dir: "{{ graphite_dir }}/storage"
+graphite_content_dir: "/usr/local/webapp/content"
+
+graphite_rrd_dir: /var/lib/carbon/rrd
+graphite_log_dir: /var/log/graphite-web/
+graphite_index: '{{ graphite_storage_dir }}/index'
+
+graphite_version: latest
+graphite_use_nginx: true
+graphite_secret_key: "SECRET_KEY"
+graphite_host: localhost
+graphite_port: 80
+graphite_scheme: http
+graphite_url: "{{ graphite_scheme }}://{{ graphite_host }}:{{ graphite_port }}"
+
+graphite_uwsgi_sock_dir: /var/uwsgi
+graphite_uwsgi_sock: '{{ graphite_uwsgi_sock_dir }}/graphite_uwsgi.sock'
+graphite_uwsgi_pid: '{{ graphite_uwsgi_sock_dir }}/graphite_uwsgi.pid'
+
+django_dir: "{{ dist_django_dir }}" #Check the proper file in vars
+
+whisper_dir: /media/metrics/whisper/
+
+whisper_cron_jobs:
+  - name: "Remove old whisper data"
+    cron_file: ansible_whisper_data_cleanup
+    weekday: 0
+    user: root
+    job: "find {{ whisper_dir }} -type f -mtime +60 -name \\*.wsp -delete >> /var/log/ansible_whisper_data_cleanup.log 2>&1"
+
+  - name: "Remove empty whisper dirs"
+    cron_file: ansible_whisper_dir_cleanup
+    user: root
+    weekday: 0
+    job: "find {{ whisper_dir }} -depth -type d -empty -delete >> /var/log/ansible_whisper_dir_cleanup.log 2>&1"
+
+carbon_metric_prefix: carbon
+carbon_metric_interval: 60
+carbon_storage_schema:
+  carbon:
+    pattern: "^{{ carbon_metric_prefix }}\\."
+    retentions: "{{ carbon_metric_interval }}:90d"
+  default_1min_for_90day:
+    pattern: ".*"
+    retentions: "60s:90d"

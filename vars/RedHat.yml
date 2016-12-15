@@ -1,0 +1,5 @@
+---
+nginx_user: nginx
+nginx_group: nginx
+dist_graphite_dir: /usr/lib/python2.7/site-packages/opt/graphite
+dist_django_dir: /usr/lib/python2.7/site-packages/django

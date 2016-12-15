@@ -1,0 +1,8 @@
+
+{% for schema_name, schema_value in carbon_storage_schema.iteritems() %}
+[{{ schema_name }}]
+{% for schema_item, schema_item_value in schema_value.iteritems() %}
+{{ schema_item }} = {{ schema_item_value }}
+{% endfor %}
+
+{% endfor  %}

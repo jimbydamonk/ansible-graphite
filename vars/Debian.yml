@@ -1,0 +1,5 @@
+---
+nginx_user: www-data
+nginx_group: www-data
+dist_graphite_dir: /usr/local/lib/python2.7/dist-packages/opt/graphite
+dist_django_dir: /usr/local/lib/python2.7/dist-packages/django

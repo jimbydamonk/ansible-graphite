@@ -1,0 +1,7 @@
+---
+- name: Install graphite pre reqs (yum)
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libffi-devel

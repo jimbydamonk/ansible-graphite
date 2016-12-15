@@ -1,0 +1,26 @@
+---
+galaxy_info:
+  author: Mike Buzzetti
+  description: Install and configures Graphite
+  company: The New York Times
+  license: Apache
+  min_ansible_version: 2.0
+  platforms:
+    - name: EL
+      versions:
+        - xenial
+    - name: Ubuntu
+      versions:
+        - 6
+        - 7
+  galaxy_tags:
+    - graphite
+    - monitoring
+    - system
+
+dependencies:
+  - { role: bobbyrenwick.pip }
+  - { role: ansible-libselinux-python }
+  - { role: cchurch.uwsgi }
+  - { role: geerlingguy.repo-epel, when: ansible_os_family == "RedHat" and grafana_install_nginx }
+  - { role: geerlingguy.nginx }

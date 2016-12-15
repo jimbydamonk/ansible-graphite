@@ -1,0 +1,15 @@
+[uwsgi]
+processes = 2
+pidfile = {{ graphite_uwsgi_pid }}
+socket = {{ graphite_uwsgi_sock }}
+
+uid={{ nginx_user }}
+gid={{ nginx_group }}
+
+buffer-size = 8192
+
+pythonpath = {{ graphite_webapp }}
+chdir = {{ graphite_dir }}
+pymodule-alias = graphite.local_settings={{ graphite_webapp }}/graphite/local_settings.py
+module = wsgi
+plugin = python27

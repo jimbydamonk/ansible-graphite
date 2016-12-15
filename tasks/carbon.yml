@@ -1,0 +1,45 @@
+---
+
+- name: Install python-carbon
+  yum:
+    name: python-carbon
+    state: present
+  when: ansible_os_family == 'RedHat'
+
+- name: Install graphite-carbon
+  apt:
+    name: graphite-carbon
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Create whisper directory
+  file:
+    path: "{{ whisper_dir }}"
+    mode: 0755
+    state: "directory"
+
+- name: Create carbon directory
+  file:
+    path: "{{ whisper_dir }}/carbon"
+    mode: 0755
+    state: "directory"
+
+- name: Create carbon directory for collectd
+  file:
+    path: "{{ whisper_dir }}/collectd"
+    mode: 0755
+    state: "directory"
+
+- name: Configure carbon
+  template:
+    src: etc/carbon/carbon.conf.j2
+    dest: /etc/carbon/carbon.conf
+    mode: 0644
+  notify: Restart carbon
+
+- name: Configure carbon storage schema
+  template:
+    src: etc/carbon/storage-schemas.conf.j2
+    dest: /etc/carbon/storage-schemas.conf
+    mode: 0644
+  notify: Restart carbon

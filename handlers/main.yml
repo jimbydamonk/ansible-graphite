@@ -1,0 +1,6 @@
+---
+- name: Restart carbon
+  service:
+    name: carbon-cache
+    state: restarted
+    enabled: yes
