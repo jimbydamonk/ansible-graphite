@@ -20,7 +20,7 @@ galaxy_info:
 
 dependencies:
   - { role: bobbyrenwick.pip }
-  - { role: jimbydamonk.ansible-libselinux-python }
+  - { role: jimbydamonk.libselinux-python }
   - { role: cchurch.uwsgi }
   - { role: geerlingguy.repo-epel, when: ansible_os_family == "RedHat" and grafana_install_nginx }
   - { role: geerlingguy.nginx }

@@ -63,7 +63,7 @@ Dependencies
 ------------
 
 - bobbyrenwick.pip
-- jimbydamonk.ansible-libselinux-python
+- jimbydamonk.libselinux-python
 - cchurch.uwsgi
 - geerlingguy.repo-epel (only for RedHat)
 - geerlingguy.nginx
