@@ -22,7 +22,7 @@ install:
   - printf '[defaults]\nroles_path=../' >ansible.cfg
 
   # Install dependencies
-  - ansible-galaxy install -r tests/requiremintes.txt
+  - ansible-galaxy install -r tests/requirements.txt --ignore-errors
 
 script:
   # Basic role syntax check
