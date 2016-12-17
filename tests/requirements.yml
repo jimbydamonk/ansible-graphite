@@ -2,3 +2,4 @@
 - src: geerlingguy.nginx
 - src: jimbydamonk.libselinux-python
 - src: cchurch.uwsgi
+- src: geerlingguy.repo-epel
