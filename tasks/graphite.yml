@@ -39,7 +39,7 @@
     mode: "0755"
 
 - name: Create graphite database
-  command: PYTHONPATH={{ graphite_webapp }} django-admin.py migrate --settings=graphite.settings
+  shell: PYTHONPATH={{ graphite_webapp }} django-admin.py migrate --settings=graphite.settings
   args:
     chdir: "{{ graphite_webapp }}/"
     creates: "{{ graphite_webapp }}/graphite.db"
