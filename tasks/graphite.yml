@@ -39,9 +39,9 @@
     mode: "0755"
 
 - name: Create graphite database
-  command: python2.7 ./manage.py syncdb --noinput
+  command: PYTHONPATH={{ graphite_webapp }} django-admin.py migrate --settings=graphite.settings
   args:
-    chdir: "{{ graphite_webapp }}/graphite"
+    chdir: "{{ graphite_webapp }}/"
     creates: "{{ graphite_webapp }}/graphite.db"
   register: graphite_db_setup
 
