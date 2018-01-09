@@ -64,7 +64,7 @@
     dest: "{{ graphite_webapp }}/wsgi.py"
     mode: "0755"
     backup: yes
-  notify: Reload nginx
+  notify: reload nginx
 
 - name: Configure nginx for Grapthite
   template:
@@ -72,7 +72,7 @@
     dest: /etc/nginx/conf.d/graphite.conf
     mode: 0755
     backup: yes
-  notify: Reload nginx
+  notify: reload nginx
 
 - name: Copy selinux policy for nginx and uwsgi
   copy:
